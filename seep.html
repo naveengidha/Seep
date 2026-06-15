@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Seep" />
+  <meta name="theme-color" content="#1a3a1a" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <title>Seep – Learn the Game</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Georgia, serif;
+      background: #1a3a1a;
+      color: #f0e8d0;
+      min-height: 100vh;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.4rem;
+      letter-spacing: 0.08em;
+      color: #f5d060;
+      text-shadow: 0 2px 8px #0008;
+      margin-bottom: 0.3rem;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 1rem;
+      color: #adc89a;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+
+    /* Tab navigation */
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    nav button {
+      background: #2d5a2d;
+      color: #c8e0b0;
+      border: 2px solid #4a8a4a;
+      border-radius: 6px;
+      padding: 0.5rem 1.2rem;
+      font-size: 0.95rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    nav button:hover { background: #3d7a3d; color: #f5e8c0; }
+
+    nav button.active {
+      background: #f5d060;
+      color: #1a3a1a;
+      border-color: #f5d060;
+      font-weight: bold;
+    }
+
+    /* Tab panels */
+    .tab { display: none; }
+    .tab.active { display: block; }
+
+    /* Card container */
+    .card {
+      background: #25472580;
+      border: 1px solid #4a7a4a;
+      border-radius: 10px;
+      padding: 1.5rem 1.8rem;
+      max-width: 760px;
+      margin: 0 auto 1.5rem;
+    }
+
+    .card h2 {
+      color: #f5d060;
+      font-size: 1.35rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #4a7a4a55;
+      padding-bottom: 0.5rem;
+    }
+
+    .card h3 {
+      color: #adc89a;
+      font-size: 1.05rem;
+      margin: 1rem 0 0.4rem;
+    }
+
+    p, li { line-height: 1.75; font-size: 0.97rem; }
+    ul, ol { padding-left: 1.4rem; }
+    li { margin-bottom: 0.3rem; }
+
+    /* Example boxes */
+    .example {
+      background: #1a2e1a;
+      border-left: 3px solid #f5d060;
+      border-radius: 4px;
+      padding: 0.7rem 1rem;
+      margin: 0.8rem 0;
+      font-size: 0.92rem;
+      color: #d8e8c0;
+    }
+
+    .example strong { color: #f5d060; }
+
+    /* Card value table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.6rem;
+      font-size: 0.95rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 0.45rem 0.8rem;
+      border-bottom: 1px solid #4a7a4a44;
+    }
+
+    th { color: #adc89a; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    td.pts { color: #f5d060; font-weight: bold; }
+
+    /* Suit symbols */
+    .spade { color: #a0c8ff; }
+    .diamond { color: #ff9090; }
+    .heart { color: #ff9090; }
+    .club { color: #c0e0a0; }
+
+    /* Step tracker (Learn in 4 Steps) */
+    .step-list { list-style: none; padding: 0; }
+
+    .step-list li {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      padding: 0.8rem 0.6rem;
+      border-bottom: 1px solid #4a7a4a33;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: background 0.1s;
+    }
+
+    .step-list li:hover { background: #2d5a2d55; }
+    .step-list li:last-child { border-bottom: none; }
+
+    .step-num {
+      background: #4a7a4a;
+      color: #f5d060;
+      border-radius: 50%;
+      width: 2rem;
+      height: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      flex-shrink: 0;
+      font-size: 0.9rem;
+    }
+
+    .step-num.done { background: #f5d060; color: #1a3a1a; }
+
+    .step-body { flex: 1; }
+    .step-title { font-weight: bold; color: #f0e8d0; }
+    .step-detail { font-size: 0.88rem; color: #adc89a; margin-top: 0.25rem; }
+
+    .step-check {
+      font-size: 1.1rem;
+      align-self: center;
+      opacity: 0.35;
+      transition: opacity 0.15s;
+    }
+
+    .step-list li.done .step-check { opacity: 1; color: #7adf7a; }
+
+    /* Tips accordion */
+    .tip-item {
+      border-bottom: 1px solid #4a7a4a44;
+    }
+
+    .tip-item:last-child { border-bottom: none; }
+
+    .tip-toggle {
+      width: 100%;
+      background: none;
+      border: none;
+      text-align: left;
+      color: #f0e8d0;
+      padding: 0.75rem 0.2rem;
+      font-family: inherit;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .tip-toggle:hover { color: #f5d060; }
+
+    .tip-toggle .arrow { transition: transform 0.2s; font-style: normal; color: #adc89a; }
+    .tip-toggle.open .arrow { transform: rotate(90deg); }
+
+    .tip-body {
+      display: none;
+      font-size: 0.92rem;
+      color: #c8d8b0;
+      padding: 0 0.2rem 0.9rem;
+      line-height: 1.7;
+    }
+
+    .tip-body.open { display: block; }
+
+    /* Quiz */
+    .quiz-question {
+      margin-bottom: 1.4rem;
+    }
+
+    .quiz-question p {
+      font-weight: bold;
+      color: #f0e8d0;
+      margin-bottom: 0.6rem;
+    }
+
+    .quiz-options { list-style: none; padding: 0; }
+
+    .quiz-options li {
+      margin-bottom: 0.4rem;
+    }
+
+    .quiz-options button {
+      background: #2d5a2d;
+      border: 1px solid #4a8a4a;
+      color: #c8e0b0;
+      border-radius: 6px;
+      padding: 0.45rem 1rem;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.93rem;
+      width: 100%;
+      text-align: left;
+      transition: background 0.1s;
+    }
+
+    .quiz-options button:hover:not(:disabled) { background: #3d7a3d; }
+
+    .quiz-options button.correct { background: #2a6a2a; border-color: #7adf7a; color: #d0ffd0; }
+    .quiz-options button.wrong   { background: #5a2020; border-color: #df5050; color: #ffd0d0; }
+    .quiz-options button:disabled { cursor: default; }
+
+    .quiz-feedback {
+      font-size: 0.88rem;
+      margin-top: 0.5rem;
+      min-height: 1.2em;
+      color: #adc89a;
+      font-style: italic;
+    }
+
+    .quiz-score {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #f5d060;
+      margin-top: 1rem;
+    }
+
+    #reset-quiz {
+      display: block;
+      margin: 1rem auto 0;
+      background: #2d5a2d;
+      color: #c8e0b0;
+      border: 1px solid #4a8a4a;
+      border-radius: 6px;
+      padding: 0.5rem 1.4rem;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.93rem;
+    }
+
+    #reset-quiz:hover { background: #3d7a3d; }
+
+    /* Warning note */
+    .warning {
+      background: #3a2a10;
+      border-left: 3px solid #f5a020;
+      border-radius: 4px;
+      padding: 0.6rem 1rem;
+      margin: 0.8rem 0;
+      font-size: 0.9rem;
+      color: #e8c880;
+    }
+
+    /* Play Now button */
+    .play-now-wrap {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    #play-now-btn {
+      background: #f5d060;
+      color: #1a3a1a;
+      border: none;
+      border-radius: 8px;
+      padding: 0.6rem 2rem;
+      font-size: 1rem;
+      font-family: inherit;
+      font-weight: bold;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: background 0.15s, transform 0.1s;
+      box-shadow: 0 2px 8px #0005;
+    }
+
+    #play-now-btn:hover { background: #ffe080; transform: translateY(-1px); }
+    #play-now-btn:active { transform: translateY(0); }
+
+    /* ── Game layout ─────────────────────────────────────────── */
+    #game-area {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .game-status-bar {
+      background: #1e421e;
+      border: 1px solid #4a7a4a;
+      border-radius: 8px;
+      padding: 0.7rem 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .status-scores {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 0.55rem;
+    }
+
+    .status-player { text-align: left; }
+    .status-cpu    { text-align: right; }
+
+    .status-scores .score-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #7aaa6a;
+    }
+
+    .status-scores .score-val {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #f5d060;
+      line-height: 1.1;
+    }
+
+    .status-vs {
+      text-align: center;
+      font-size: 0.75rem;
+      color: #4a7a4a;
+      font-style: italic;
+      padding: 0 0.3rem;
+    }
+
+    .status-meta {
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid #4a7a4a44;
+      padding-top: 0.45rem;
+      font-size: 0.78rem;
+      color: #7aaa6a;
+    }
+
+    .status-meta strong { color: #adc89a; }
+
+    .game-section-label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #7aaa6a;
+      margin-bottom: 0.4rem;
+      text-align: center;
+    }
+
+    /* Floor */
+    #floor-area {
+      background: #1e421e;
+      border: 1px solid #4a7a4a;
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 1rem;
+      min-height: 110px;
+    }
+
+    #floor-cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 0.4rem;
+    }
+
+    /* Playing cards */
+    .pcard {
+      width: 58px;
+      height: 82px;
+      border-radius: 7px;
+      border: 2px solid #888;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: bold;
+      cursor: default;
+      user-select: none;
+      position: relative;
+      transition: transform 0.1s, box-shadow 0.1s, border-color 0.1s;
+      background: #fffef5;
+      color: #222;
+      box-shadow: 0 2px 6px #0004;
+    }
+
+    .pcard.red { color: #c0201c; }
+
+    .pcard .rank { font-size: 1rem; line-height: 1; }
+    .pcard .suit { font-size: 0.9rem; line-height: 1; margin-top: 2px; }
+
+    /* Selectable hand card */
+    .pcard.hand-card {
+      cursor: pointer;
+    }
+
+    .pcard.hand-card:hover { transform: translateY(-6px); box-shadow: 0 6px 14px #0006; }
+
+    .pcard.selected {
+      border-color: #f5d060;
+      box-shadow: 0 0 0 3px #f5d06088, 0 6px 14px #0006;
+      transform: translateY(-8px);
+    }
+
+    /* Selectable floor card */
+    .pcard.floor-card { cursor: pointer; }
+    .pcard.floor-card:hover { transform: translateY(-4px); box-shadow: 0 4px 10px #0005; }
+    .pcard.floor-pick { border-color: #7adf7a; box-shadow: 0 0 0 3px #7adf7a66; }
+
+    /* House card on floor */
+    .pcard.house-card {
+      border-style: dashed;
+      border-color: #f5a020;
+      background: #fffbea;
+    }
+
+    .house-label {
+      position: absolute;
+      bottom: 3px;
+      font-size: 0.6rem;
+      color: #b07010;
+      font-weight: bold;
+    }
+
+    /* Player hand */
+    #hand-area {
+      background: #1a3a1a;
+      border: 1px solid #3a6a3a;
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 1rem;
+    }
+
+    #hand-cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 0.4rem;
+    }
+
+    /* Action panel */
+    #action-panel {
+      background: #1e421e;
+      border: 1px solid #4a7a4a;
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 1rem;
+    }
+
+    #action-panel h3 {
+      color: #adc89a;
+      font-size: 0.9rem;
+      margin-bottom: 0.7rem;
+      text-align: center;
+    }
+
+    .action-btns { display: flex; gap: 0.6rem; flex-wrap: wrap; justify-content: center; }
+
+    .action-btns button {
+      background: #2d5a2d;
+      color: #c8e0b0;
+      border: 1px solid #4a8a4a;
+      border-radius: 6px;
+      padding: 0.55rem 1.1rem;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.92rem;
+      transition: background 0.1s;
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .action-btns button:hover:not(:disabled) { background: #3d7a3d; color: #f5e8c0; }
+    .action-btns button:disabled { opacity: 0.35; cursor: default; }
+
+    .action-btns button.primary {
+      background: #4a7a20;
+      border-color: #7aaa40;
+      color: #d8f0a0;
+      font-weight: bold;
+    }
+
+    .action-btns button.primary:hover:not(:disabled) { background: #5a9a28; }
+
+    /* Game log */
+    #game-log {
+      background: #111e11;
+      border: 1px solid #2a4a2a;
+      border-radius: 8px;
+      padding: 0.8rem 1rem;
+      font-size: 0.82rem;
+      color: #8aaa78;
+      max-height: 130px;
+      overflow-y: auto;
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+
+    #game-log .log-seep   { color: #f5d060; font-weight: bold; }
+    #game-log .log-cpu    { color: #90c8ff; }
+    #game-log .log-player { color: #a8df88; }
+    #game-log .log-warn   { color: #f5a060; }
+
+    /* End-of-game overlay */
+    #game-over {
+      display: none;
+      background: #1a2e1a;
+      border: 2px solid #f5d060;
+      border-radius: 12px;
+      padding: 1.6rem;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    #game-over h2 { color: #f5d060; margin-bottom: 0.6rem; }
+    #game-over p  { color: #c8e0b0; margin-bottom: 0.4rem; font-size: 0.93rem; }
+
+    #game-over button {
+      margin-top: 1rem;
+      background: #f5d060;
+      color: #1a3a1a;
+      border: none;
+      border-radius: 6px;
+      padding: 0.5rem 1.6rem;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #game-over button:hover { background: #ffe080; }
+
+    /* CPU hand (face-down row) */
+    #cpu-area {
+      background: #163016;
+      border: 1px solid #3a5a3a;
+      border-radius: 10px;
+      padding: 0.8rem 1.2rem;
+      margin-bottom: 1rem;
+    }
+
+    #cpu-cards {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.4rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .pcard.face-down {
+      background: repeating-linear-gradient(135deg, #2a5a2a 0px, #2a5a2a 4px, #1a3a1a 4px, #1a3a1a 8px);
+      border-color: #4a7a4a;
+      cursor: default;
+    }
+
+    /* Safe area insets for notched phones */
+    body {
+      padding-top: max(2rem, env(safe-area-inset-top));
+      padding-bottom: max(1rem, env(safe-area-inset-bottom));
+      padding-left: max(1rem, env(safe-area-inset-left));
+      padding-right: max(1rem, env(safe-area-inset-right));
+    }
+
+    @media (max-width: 500px) {
+      h1 { font-size: 1.8rem; }
+      .card { padding: 1rem 1.1rem; }
+      .pcard { width: 48px; height: 68px; font-size: 0.75rem; }
+      .pcard .rank { font-size: 0.85rem; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>&#9824; Seep</h1>
+<p class="subtitle">2-player card game &nbsp;·&nbsp; Quick-start guide</p>
+
+<nav>
+  <button class="active" onclick="showTab('rules')">Rules</button>
+  <button onclick="showTab('scoring')">Scoring</button>
+  <button onclick="showTab('learn')">Learn in 4 Steps</button>
+  <button onclick="showTab('tips')">Strategy Tips</button>
+  <button onclick="showTab('quiz')">Quiz</button>
+</nav>
+
+<div class="play-now-wrap">
+  <button id="play-now-btn" onclick="showTab('play'); startGame();">&#9824; Play Now</button>
+</div>
+
+<!-- ============ RULES ============ -->
+<div id="rules" class="tab active">
+
+  <div class="card">
+    <h2>Goal</h2>
+    <p>Score the most points by capturing valuable cards and earning bonus points for clearing the table (<strong>seeps</strong>).</p>
+  </div>
+
+  <div class="card">
+    <h2>Setup</h2>
+    <ul>
+      <li>Use a standard 52-card deck.</li>
+      <li>Deal <strong>4 cards</strong> to each player.</li>
+      <li>Place <strong>4 cards face-up</strong> in the center — this is <em>the floor</em>.</li>
+      <li>Put the remaining deck face-down.</li>
+      <li>After both players use their 4 cards, deal another 4 each.</li>
+      <li>Continue until the deck is exhausted.</li>
+    </ul>
+    <p style="margin-top:0.8rem; color:#adc89a; font-size:0.9rem;">Keep captured cards face-down in your own scoring pile.</p>
+  </div>
+
+  <div class="card">
+    <h2>Card Values</h2>
+    <table>
+      <thead><tr><th>Card</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>Ace</td><td class="pts">1</td></tr>
+        <tr><td>2 – 10</td><td class="pts">Face value</td></tr>
+        <tr><td>Jack</td><td class="pts">11</td></tr>
+        <tr><td>Queen</td><td class="pts">12</td></tr>
+        <tr><td>King</td><td class="pts">13</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:0.8rem;">All captures are based on <strong>matching totals</strong>.</p>
+    <div class="example"><strong>Examples:</strong><br>
+      · 7 captures a single 7<br>
+      · 9 captures 4 + 5<br>
+      · King (13) captures 6 + 7
+    </div>
+    <p>You may capture <strong>multiple groups</strong> with one card if each group matches the played card.</p>
+    <div class="example"><strong>Multi-capture example:</strong><br>
+      Floor: 3, 5, 8 &nbsp;→&nbsp; Play an 8 to capture <em>both</em> (3 + 5) and (8)
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Your Turn — Choose ONE Action</h2>
+
+    <h3>1. Capture</h3>
+    <p>Play a card from your hand and take matching cards from the floor.</p>
+    <div class="example"><strong>Example:</strong> Floor: 2, 4, 6 &nbsp;→&nbsp; Play a 10 to capture 4 + 6</div>
+
+    <h3>2. Build a House</h3>
+    <p>Combine a card from your hand with cards on the floor to create a set value that you plan to capture later.</p>
+    <div class="example">
+      <strong>Example:</strong> Floor: 4 &nbsp;·&nbsp; Hand: 6 and 10<br>
+      Play the 6 with the 4 to create a house worth 10.<br>
+      You must already hold the 10 to capture it later.
+    </div>
+    <div class="warning">&#9888; Your opponent can <strong>steal your house</strong> if they can capture it first.</div>
+    <p style="font-size:0.88rem; color:#adc89a;">For your first few games, skip houses until everyone understands capturing.</p>
+
+    <h3>3. Discard</h3>
+    <p>If you cannot or do not want to capture or build, place one card face-up on the floor.</p>
+  </div>
+
+  <div class="card">
+    <h2>What Is a Seep?</h2>
+    <p>A seep happens when you <strong>capture every card currently on the floor</strong>, leaving it empty.</p>
+    <div class="example">
+      <strong>Example:</strong> Floor: 2, 5, 6<br>
+      Play a King (13) and capture all three cards (2 + 5 + 6 = 13).<br>
+      The floor is now empty — you scored a seep bonus.
+    </div>
+    <p>Agree before starting how many bonus points a seep is worth. Many groups use <strong>+50</strong>.</p>
+  </div>
+
+</div>
+
+<!-- ============ SCORING ============ -->
+<div id="scoring" class="tab">
+
+  <div class="card">
+    <h2>Basic Scoring</h2>
+    <p>Traditional scoring totals <strong>100 points</strong> across all cards.</p>
+    <table style="margin-top:1rem;">
+      <thead><tr><th>Card</th><th>Points</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><span class="spade">&#9824;</span> Every spade</td><td class="pts">Face value</td><td>Ace = 1, Jack = 11 …</td></tr>
+        <tr><td><span class="diamond">&#9830;</span> 10&#9830;</td><td class="pts">6 pts</td><td>The "Dimond Ten" — special card</td></tr>
+        <tr><td>Other three aces (&#9827;&#9829;&#9830;)</td><td class="pts">1 pt each</td><td>&#9827;A + &#9829;A + &#9830;A</td></tr>
+        <tr><td>Seep bonus</td><td class="pts">+50</td><td>(or agreed amount)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>High-value Cards to Watch</h2>
+    <ul>
+      <li><span class="spade">&#9824;</span> <strong>A♠</strong> — 1 point</li>
+      <li><span class="spade">&#9824;</span> <strong>2♠ – 10♠</strong> — face value each</li>
+      <li><span class="spade">&#9824;</span> <strong>J♠</strong> — 11 points</li>
+      <li><span class="spade">&#9824;</span> <strong>Q♠</strong> — 12 points</li>
+      <li><span class="spade">&#9824;</span> <strong>K♠</strong> — 13 points</li>
+      <li><span class="diamond">&#9830;</span> <strong>10♦</strong> — 6 points</li>
+      <li>&#9827;&#9829;&#9830; <strong>A (non-spade)</strong> — 1 point each</li>
+    </ul>
+    <p style="margin-top:0.8rem; color:#adc89a; font-size:0.9rem;">Total of all card points = 100. Seep bonuses are added on top.</p>
+  </div>
+
+</div>
+
+<!-- ============ LEARN IN 4 STEPS ============ -->
+<div id="learn" class="tab">
+
+  <div class="card">
+    <h2>Learn in 4 Steps</h2>
+    <p style="font-size:0.9rem; color:#adc89a; margin-bottom:1rem;">Click each game to mark it complete as you work through them.</p>
+
+    <ul class="step-list" id="step-list">
+      <li onclick="toggleStep(this)" data-step="1">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Capture Only</div>
+          <div class="step-detail">Ignore houses. Ignore seep bonuses. Focus on matching totals and adding to 13 quickly.</div>
+        </div>
+        <span class="step-check">&#10003;</span>
+      </li>
+      <li onclick="toggleStep(this)" data-step="2">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Add Seep Bonuses</div>
+          <div class="step-detail">Watch for chances to clear the floor. Avoid leaving easy combinations for your opponent.</div>
+        </div>
+        <span class="step-check">&#10003;</span>
+      </li>
+      <li onclick="toggleStep(this)" data-step="3">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Add Houses</div>
+          <div class="step-detail">Build small houses only. Only build if you can protect them. Remember: opponent can steal.</div>
+        </div>
+        <span class="step-check">&#10003;</span>
+      </li>
+      <li onclick="toggleStep(this)" data-step="4">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">Full Rules</div>
+          <div class="step-detail">Track which high cards have been played. Remember valuable spades. Think 2–3 turns ahead.</div>
+        </div>
+        <span class="step-check">&#10003;</span>
+      </li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ============ TIPS ============ -->
+<div id="tips" class="tab">
+
+  <div class="card">
+    <h2>Beginner Strategy Tips</h2>
+    <p style="font-size:0.9rem; color:#adc89a; margin-bottom:1rem;">Click a tip to expand it.</p>
+
+    <div class="tip-item">
+      <button class="tip-toggle" onclick="toggleTip(this)">
+        Count combinations to 13 constantly <span class="arrow">&#9658;</span>
+      </button>
+      <div class="tip-body">
+        Every card you play must either total to a floor card or sum with floor cards to make the played card's value. Before your turn, scan the floor for all pairs and groups that reach your hand cards' values. The King (13) is especially powerful — look for floor groups that sum to 13.
+      </div>
+    </div>
+
+    <div class="tip-item">
+      <button class="tip-toggle" onclick="toggleTip(this)">
+        Avoid leaving easy captures on the floor <span class="arrow">&#9658;</span>
+      </button>
+      <div class="tip-body">
+        When you discard, think about what you're leaving behind. A lone 7 or a pair that easily sums to a common hand card is a gift to your opponent. Prefer discarding cards that create awkward totals or that your opponent is unlikely to hold.
+      </div>
+    </div>
+
+    <div class="tip-item">
+      <button class="tip-toggle" onclick="toggleTip(this)">
+        Protect valuable spades <span class="arrow">&#9658;</span>
+      </button>
+      <div class="tip-body">
+        Spades score points — especially J♠ (11), Q♠ (12), and K♠ (13). If a valuable spade lands on the floor, prioritize capturing it over other plays. If it's in your hand, be strategic about when you play it.
+      </div>
+    </div>
+
+    <div class="tip-item">
+      <button class="tip-toggle" onclick="toggleTip(this)">
+        Do not build houses carelessly <span class="arrow">&#9658;</span>
+      </button>
+      <div class="tip-body">
+        A house requires you to hold the capture card in your hand. If your opponent can reach the same total, they steal the whole house — including your contributed card. Only build when you can capture on your very next turn, or when the floor state makes a steal very unlikely.
+      </div>
+    </div>
+
+    <div class="tip-item">
+      <button class="tip-toggle" onclick="toggleTip(this)">
+        Prevent your opponent from seeping <span class="arrow">&#9658;</span>
+      </button>
+      <div class="tip-body">
+        A seep is worth +50 points — potentially as much as half the cards in the deck. If the floor is near-empty (1–2 cards), think about whether your opponent can clear it on their turn. Discard a card that makes the floor total unreachable if you must pass.
+      </div>
+    </div>
+
+    <div class="tip-item">
+      <button class="tip-toggle" onclick="toggleTip(this)">
+        Think 2–3 turns ahead <span class="arrow">&#9658;</span>
+      </button>
+      <div class="tip-body">
+        Most mistakes happen because players focus only on the current turn. Ask yourself: what will the floor look like after I play? What cards might my opponent hold? Can I set up a seep or a multi-capture next turn? For practice, play open-handed and discuss each move out loud.
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ============ QUIZ ============ -->
+<div id="quiz" class="tab">
+
+  <div class="card">
+    <h2>Knowledge Check</h2>
+    <p style="font-size:0.9rem; color:#adc89a; margin-bottom:1.2rem;">Test your understanding of the rules.</p>
+
+    <div id="quiz-container"></div>
+    <div class="quiz-score" id="quiz-score"></div>
+    <button id="reset-quiz" onclick="resetQuiz()" style="display:none;">Try Again</button>
+  </div>
+
+</div>
+
+<!-- ============ PLAY ============ -->
+<div id="play" class="tab">
+<div id="game-area">
+
+  <div id="game-over">
+    <h2 id="go-title"></h2>
+    <p id="go-detail"></p>
+    <p id="go-breakdown"></p>
+    <button onclick="startGame()">Play Again</button>
+  </div>
+
+  <div class="game-status-bar">
+    <div class="status-scores">
+      <div class="status-player">
+        <div class="score-label">You</div>
+        <div class="score-val" id="player-score">0</div>
+      </div>
+      <div class="status-vs">vs</div>
+      <div class="status-cpu">
+        <div class="score-label">CPU</div>
+        <div class="score-val" id="cpu-score">0</div>
+      </div>
+    </div>
+    <div class="status-meta">
+      <span>&#127136; Deck: <strong id="deck-count">44</strong></span>
+      <span>Seeps — You: <strong id="player-seeps">0</strong> &nbsp; CPU: <strong id="cpu-seeps">0</strong></span>
+    </div>
+  </div>
+
+  <div id="cpu-area">
+    <div class="game-section-label">CPU hand</div>
+    <div id="cpu-cards"></div>
+  </div>
+
+  <div id="floor-area">
+    <div class="game-section-label">Floor</div>
+    <div id="floor-cards"></div>
+  </div>
+
+  <div id="hand-area">
+    <div class="game-section-label">Your hand — click a card to select it</div>
+    <div id="hand-cards"></div>
+  </div>
+
+  <div id="action-panel">
+    <h3 id="action-hint">Select a card from your hand.</h3>
+    <div class="action-btns">
+      <button id="btn-capture" class="primary" onclick="doCapture()" disabled>Capture selected</button>
+      <button id="btn-discard" onclick="doDiscard()" disabled>Discard selected</button>
+      <button id="btn-clear"   onclick="clearSelection()">Clear selection</button>
+    </div>
+  </div>
+
+  <div id="game-log"></div>
+
+</div>
+</div>
+
+<script>
+  // ── Tab switching ──────────────────────────────────────────────
+  function showTab(id) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    const labels = ['rules','scoring','learn','tips','quiz','play'];
+    const buttons = document.querySelectorAll('nav button');
+    const idx = labels.indexOf(id);
+    if (idx >= 0 && idx < buttons.length) buttons[idx].classList.add('active');
+  }
+
+  // ── Step tracker ───────────────────────────────────────────────
+  const doneSteps = new Set();
+
+  function toggleStep(li) {
+    const step = li.dataset.step;
+    if (doneSteps.has(step)) {
+      doneSteps.delete(step);
+      li.classList.remove('done');
+      li.querySelector('.step-num').classList.remove('done');
+    } else {
+      doneSteps.add(step);
+      li.classList.add('done');
+      li.querySelector('.step-num').classList.add('done');
+    }
+  }
+
+  // ── Tip accordion ──────────────────────────────────────────────
+  function toggleTip(btn) {
+    const body = btn.nextElementSibling;
+    const isOpen = body.classList.contains('open');
+    // close all
+    document.querySelectorAll('.tip-body').forEach(b => b.classList.remove('open'));
+    document.querySelectorAll('.tip-toggle').forEach(b => b.classList.remove('open'));
+    if (!isOpen) {
+      body.classList.add('open');
+      btn.classList.add('open');
+    }
+  }
+
+  // ── Quiz ───────────────────────────────────────────────────────
+  const questions = [
+    {
+      q: "What is the value of a King in Seep?",
+      options: ["10", "11", "12", "13"],
+      answer: 3,
+      explain: "King = 13. Jack = 11, Queen = 12."
+    },
+    {
+      q: "The floor shows: 3, 4, 6. Which card can capture both (3+4) and (6) in one play?",
+      options: ["6", "7", "10", "13"],
+      answer: 1,
+      explain: "A 7 captures the pair 3+4=7, and the lone 6 doesn't match. Play a 7 only takes 3+4. Actually — play a 6 takes the lone 6, and play a 7 takes 3+4. Neither clears all three. The correct answer is 7 to capture 3+4 only. (Re-read: groups must each match the played card.)"
+    },
+    {
+      q: "What is a seep?",
+      options: [
+        "Capturing any face card",
+        "Clearing all cards from the floor in one play",
+        "Building a house worth 13",
+        "Winning the game"
+      ],
+      answer: 1,
+      explain: "A seep is capturing every card currently on the floor, leaving it empty."
+    },
+    {
+      q: "How many points is 10♦ (Ten of Diamonds) worth?",
+      options: ["10", "6", "1", "0"],
+      answer: 1,
+      explain: "The 10♦ is a special scoring card worth 6 points."
+    },
+    {
+      q: "You want to build a house worth 9 using a floor card worth 4. What card must you already hold in your hand?",
+      options: ["4", "5", "9", "13"],
+      answer: 2,
+      explain: "You must already hold the card to capture the house — a 9 — before you can build it."
+    },
+    {
+      q: "Which suit scores points equal to the card's face value?",
+      options: ["Hearts", "Clubs", "Diamonds", "Spades"],
+      answer: 3,
+      explain: "Every spade is worth its face value in scoring."
+    },
+    {
+      q: "On your turn, which of these is NOT a legal action?",
+      options: ["Capture", "Discard", "Build a house", "Pass and draw a card"],
+      answer: 3,
+      explain: "You must choose: capture, build a house, or discard. There is no 'pass' action."
+    },
+    {
+      q: "How many cards are dealt to each player at the start?",
+      options: ["3", "4", "5", "7"],
+      answer: 1,
+      explain: "4 cards are dealt to each player, and 4 are placed face-up on the floor."
+    }
+  ];
+
+  // fix the trick question wording for Q2
+  questions[1] = {
+    q: "The floor shows: 4, 3, 6. You play a 7. What does it capture?",
+    options: ["Just the 6", "Just the 4+3", "Both 4+3 and 6", "Nothing"],
+    answer: 1,
+    explain: "A 7 captures any combination(s) that total 7. Only 4+3=7 matches, not the lone 6."
+  };
+
+  let answered = 0;
+  let correct  = 0;
+
+  function buildQuiz() {
+    const container = document.getElementById('quiz-container');
+    container.innerHTML = '';
+    answered = 0;
+    correct  = 0;
+    document.getElementById('quiz-score').textContent = '';
+    document.getElementById('reset-quiz').style.display = 'none';
+
+    questions.forEach((q, qi) => {
+      const div = document.createElement('div');
+      div.className = 'quiz-question';
+
+      const prompt = document.createElement('p');
+      prompt.textContent = `${qi + 1}. ${q.q}`;
+      div.appendChild(prompt);
+
+      const ul = document.createElement('ul');
+      ul.className = 'quiz-options';
+
+      q.options.forEach((opt, oi) => {
+        const li = document.createElement('li');
+        const btn = document.createElement('button');
+        btn.textContent = opt;
+        btn.onclick = () => answer(qi, oi, div, btn);
+        li.appendChild(btn);
+        ul.appendChild(li);
+      });
+
+      div.appendChild(ul);
+
+      const fb = document.createElement('div');
+      fb.className = 'quiz-feedback';
+      div.appendChild(fb);
+
+      container.appendChild(div);
+    });
+  }
+
+  function answer(qi, chosen, div, btn) {
+    const q = questions[qi];
+    const buttons = div.querySelectorAll('button');
+    buttons.forEach(b => b.disabled = true);
+
+    const fb = div.querySelector('.quiz-feedback');
+
+    if (chosen === q.answer) {
+      btn.classList.add('correct');
+      fb.textContent = '✓ Correct! ' + q.explain;
+      fb.style.color = '#7adf7a';
+      correct++;
+    } else {
+      btn.classList.add('wrong');
+      buttons[q.answer].classList.add('correct');
+      fb.textContent = '✗ ' + q.explain;
+      fb.style.color = '#df9090';
+    }
+
+    answered++;
+    if (answered === questions.length) {
+      const pct = Math.round(correct / questions.length * 100);
+      document.getElementById('quiz-score').textContent =
+        `You got ${correct} / ${questions.length} (${pct}%)`;
+      document.getElementById('reset-quiz').style.display = 'block';
+    }
+  }
+
+  function resetQuiz() { buildQuiz(); }
+
+  // initialise
+  buildQuiz();
+
+  // ═══════════════════════════════════════════════════════════════
+  // GAME ENGINE
+  // ═══════════════════════════════════════════════════════════════
+
+  const SUITS   = ['♠','♥','♦','♣'];
+  const RANKS   = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+  const RED     = new Set(['♥','♦']);
+
+  function cardVal(rank) {
+    if (rank === 'A')  return 1;
+    if (rank === 'J')  return 11;
+    if (rank === 'Q')  return 12;
+    if (rank === 'K')  return 13;
+    return parseInt(rank, 10);
+  }
+
+  function scoreCard(c) {
+    // spades = face value; 10♦ = 6; other aces = 1
+    if (c.suit === '♠')              return cardVal(c.rank);
+    if (c.rank === '10' && c.suit === '♦') return 6;
+    if (c.rank === 'A')              return 1;
+    return 0;
+  }
+
+  function makeDeck() {
+    const d = [];
+    for (const suit of SUITS)
+      for (const rank of RANKS)
+        d.push({ suit, rank, val: cardVal(rank), id: rank + suit });
+    return d;
+  }
+
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  // ── Game state ─────────────────────────────────────────────────
+  let G = {};
+
+  function startGame() {
+    const deck = shuffle(makeDeck());
+    G = {
+      deck,
+      floor:        [],          // plain cards on floor
+      houses:       [],          // {cards: [...], value: n, owner: 'player'|'cpu'}
+      playerHand:   [],
+      cpuHand:      [],
+      playerPile:   [],
+      cpuPile:      [],
+      playerSeeps:  0,
+      cpuSeeps:     0,
+      turn:         'player',    // 'player' | 'cpu'
+      selectedCard: null,        // card object from playerHand
+      floorPicks:   [],          // floor card ids selected for capture
+      over:         false,
+      lastCapture:  'player',    // who last captured (for leftover cards at end)
+    };
+
+    // deal 4 to each, 4 to floor
+    G.playerHand = G.deck.splice(0, 4);
+    G.cpuHand    = G.deck.splice(0, 4);
+    G.floor      = G.deck.splice(0, 4);
+
+    document.getElementById('game-over').style.display = 'none';
+    log('New game started. Your turn.', 'log-player');
+    render();
+  }
+
+  // ── Rendering ─────────────────────────────────────────────────
+  function cardHTML(c, classes = '', extra = '') {
+    const red = RED.has(c.suit) ? ' red' : '';
+    return `<div class="pcard${red} ${classes}" data-id="${c.id}" ${extra}>
+      <span class="rank">${c.rank}</span>
+      <span class="suit">${c.suit}</span>
+    </div>`;
+  }
+
+  function render() {
+    // CPU hand (face-down)
+    const cpuEl = document.getElementById('cpu-cards');
+    cpuEl.innerHTML = G.cpuHand.map(() =>
+      `<div class="pcard face-down"></div>`
+    ).join('');
+
+    // Floor
+    const floorEl = document.getElementById('floor-cards');
+    if (G.floor.length === 0 && G.houses.length === 0) {
+      floorEl.innerHTML = '<span style="color:#4a7a4a; font-size:0.88rem; font-style:italic;">Floor is empty</span>';
+    } else {
+      const picks = new Set(G.floorPicks);
+      const plain = G.floor.map(c => {
+        const sel = picks.has(c.id) ? ' floor-pick' : '';
+        return cardHTML(c, 'floor-card' + sel, `onclick="toggleFloorPick('${c.id}')" title="Click to include in capture"`);
+      }).join('');
+      const houses = G.houses.map(h => {
+        const sel = picks.has('house_' + h.value + '_' + h.owner) ? ' floor-pick' : '';
+        const hid = 'house_' + h.value + '_' + h.owner;
+        const label = h.owner === 'player' ? 'Your house' : 'CPU house';
+        return `<div class="pcard house-card floor-card${sel}" data-id="${hid}"
+            onclick="toggleFloorPick('${hid}')" title="${label} (${h.value})">
+          <span class="rank">${h.value}</span>
+          <span class="suit">&#127968;</span>
+          <span class="house-label">${h.owner === 'player' ? 'yours' : 'cpu'}</span>
+        </div>`;
+      }).join('');
+      floorEl.innerHTML = plain + houses;
+    }
+
+    // Player hand
+    const handEl = document.getElementById('hand-cards');
+    const selId = G.selectedCard ? G.selectedCard.id : null;
+    handEl.innerHTML = G.playerHand.map(c => {
+      const sel = c.id === selId ? ' selected' : '';
+      return cardHTML(c, 'hand-card' + sel, `onclick="selectHandCard('${c.id}')" title="Select"`);
+    }).join('');
+
+    // Buttons
+    const canCapture = G.selectedCard && G.floorPicks.length > 0 && G.turn === 'player';
+    const canDiscard = !!G.selectedCard && G.turn === 'player';
+    document.getElementById('btn-capture').disabled = !canCapture;
+    document.getElementById('btn-discard').disabled = !canDiscard;
+
+    // Status bar
+    document.getElementById('deck-count').textContent    = G.deck.length;
+    document.getElementById('player-score').textContent  = calcScore(G.playerPile) + G.playerSeeps * 50;
+    document.getElementById('cpu-score').textContent     = calcScore(G.cpuPile)    + G.cpuSeeps    * 50;
+    document.getElementById('player-seeps').textContent  = G.playerSeeps;
+    document.getElementById('cpu-seeps').textContent     = G.cpuSeeps;
+
+    // Hint
+    const hint = document.getElementById('action-hint');
+    if (G.turn === 'cpu') {
+      hint.textContent = 'CPU is thinking…';
+    } else if (!G.selectedCard) {
+      hint.textContent = 'Select a card from your hand.';
+    } else if (G.floorPicks.length === 0) {
+      hint.textContent = `${G.selectedCard.rank}${G.selectedCard.suit} selected (val ${G.selectedCard.val}). Click floor cards to mark for capture, or Discard.`;
+    } else {
+      const total = pickedTotal();
+      hint.textContent = `Capturing with ${G.selectedCard.rank}${G.selectedCard.suit} (${G.selectedCard.val}). Floor picks total: ${total}. ${total === G.selectedCard.val ? '✓ Valid' : '✗ Totals must match'}`;
+    }
+  }
+
+  // ── Selection helpers ──────────────────────────────────────────
+  function selectHandCard(id) {
+    if (G.turn !== 'player' || G.over) return;
+    const c = G.playerHand.find(x => x.id === id);
+    if (!c) return;
+    G.selectedCard = (G.selectedCard && G.selectedCard.id === id) ? null : c;
+    G.floorPicks = [];
+    render();
+  }
+
+  function toggleFloorPick(id) {
+    if (G.turn !== 'player' || G.over || !G.selectedCard) return;
+    const idx = G.floorPicks.indexOf(id);
+    if (idx === -1) G.floorPicks.push(id);
+    else            G.floorPicks.splice(idx, 1);
+    render();
+  }
+
+  function clearSelection() {
+    G.selectedCard = null;
+    G.floorPicks   = [];
+    render();
+  }
+
+  function pickedTotal() {
+    return G.floorPicks.reduce((sum, id) => {
+      if (id.startsWith('house_')) {
+        const parts = id.split('_');
+        return sum + parseInt(parts[1], 10);
+      }
+      const c = G.floor.find(x => x.id === id);
+      return c ? sum + c.val : sum;
+    }, 0);
+  }
+
+  // ── Player actions ─────────────────────────────────────────────
+  function doCapture() {
+    if (!G.selectedCard || G.floorPicks.length === 0 || G.turn !== 'player') return;
+
+    const total = pickedTotal();
+    if (total !== G.selectedCard.val) {
+      log(`Totals don't match (${total} ≠ ${G.selectedCard.val}). Adjust your floor picks.`, 'log-warn');
+      return;
+    }
+
+    const captured = removePicks(G.floorPicks);
+    captured.push(G.selectedCard);
+    G.playerPile.push(...captured);
+    G.playerHand = G.playerHand.filter(c => c.id !== G.selectedCard.id);
+    G.lastCapture = 'player';
+
+    const seep = G.floor.length === 0 && G.houses.length === 0;
+    if (seep) {
+      G.playerSeeps++;
+      log(`You captured ${descCards(captured)} — SEEP! (+50 bonus)`, 'log-seep');
+    } else {
+      log(`You captured ${descCards(captured)}.`, 'log-player');
+    }
+
+    G.selectedCard = null;
+    G.floorPicks   = [];
+    afterTurn('player');
+  }
+
+  function doDiscard() {
+    if (!G.selectedCard || G.turn !== 'player') return;
+    G.floor.push(G.selectedCard);
+    G.playerHand = G.playerHand.filter(c => c.id !== G.selectedCard.id);
+    log(`You discarded ${G.selectedCard.rank}${G.selectedCard.suit}.`, 'log-player');
+    G.selectedCard = null;
+    G.floorPicks   = [];
+    afterTurn('player');
+  }
+
+  // ── Post-turn logic ────────────────────────────────────────────
+  function afterTurn(who) {
+    // Deal new hands if both are empty
+    if (G.playerHand.length === 0 && G.cpuHand.length === 0) {
+      if (G.deck.length >= 8) {
+        G.playerHand = G.deck.splice(0, 4);
+        G.cpuHand    = G.deck.splice(0, 4);
+        log('New hands dealt.', '');
+      } else if (G.deck.length > 0) {
+        // deal whatever's left evenly
+        while (G.deck.length > 0) {
+          if (G.deck.length) G.playerHand.push(G.deck.shift());
+          if (G.deck.length) G.cpuHand.push(G.deck.shift());
+        }
+        log('Final cards dealt.', '');
+      }
+    }
+
+    // Check end of game
+    if (G.playerHand.length === 0 && G.cpuHand.length === 0 && G.deck.length === 0) {
+      endGame();
+      return;
+    }
+
+    G.turn = (who === 'player') ? 'cpu' : 'player';
+    render();
+
+    if (G.turn === 'cpu') {
+      setTimeout(cpuTurn, 900);
+    }
+  }
+
+  // ── CPU AI ─────────────────────────────────────────────────────
+  function cpuTurn() {
+    if (G.turn !== 'cpu' || G.over) return;
+
+    // Find all possible captures for each cpu hand card
+    let bestPlay = null; // {card, picks, score}
+
+    for (const card of G.cpuHand) {
+      const captures = findCaptures(card.val, G.floor, G.houses);
+      for (const picks of captures) {
+        const captured = picks.map(id => {
+          if (id.startsWith('house_')) {
+            const v = parseInt(id.split('_')[1], 10);
+            return { val: v, rank: 'H', suit: '?', id };
+          }
+          return G.floor.find(c => c.id === id);
+        }).filter(Boolean);
+
+        const pts = captured.reduce((s, c) => s + scoreCard(c), 0) + scoreCard(card);
+        const isSeep = (picks.length === G.floor.length + G.houses.length);
+        const seepBonus = isSeep ? 100 : 0; // heavily weight seeps
+        const s = pts + seepBonus;
+
+        if (!bestPlay || s > bestPlay.score) {
+          bestPlay = { card, picks, score: s };
+        }
+      }
+    }
+
+    if (bestPlay) {
+      // Execute capture
+      const captured = removePicks(bestPlay.picks);
+      captured.push(bestPlay.card);
+      G.cpuPile.push(...captured);
+      G.cpuHand = G.cpuHand.filter(c => c.id !== bestPlay.card.id);
+      G.lastCapture = 'cpu';
+
+      const seep = G.floor.length === 0 && G.houses.length === 0;
+      if (seep) {
+        G.cpuSeeps++;
+        log(`CPU captured ${descCards(captured)} — SEEP! (+50 bonus)`, 'log-seep');
+      } else {
+        log(`CPU captured ${descCards(captured)}.`, 'log-cpu');
+      }
+    } else {
+      // Discard: prefer a card that doesn't create easy captures for player
+      const discard = chooseCpuDiscard();
+      G.floor.push(discard);
+      G.cpuHand = G.cpuHand.filter(c => c.id !== discard.id);
+      log(`CPU discarded ${discard.rank}${discard.suit}.`, 'log-cpu');
+    }
+
+    afterTurn('cpu');
+  }
+
+  function chooseCpuDiscard() {
+    // Prefer discarding a card whose value can't easily be matched on the floor
+    const floorVals = G.floor.map(c => c.val);
+    let best = null, bestRisk = Infinity;
+    for (const card of G.cpuHand) {
+      const risk = floorVals.filter(v => v === card.val).length;
+      if (risk < bestRisk) { bestRisk = risk; best = card; }
+    }
+    return best || G.cpuHand[0];
+  }
+
+  // ── Capture logic ──────────────────────────────────────────────
+  // Returns array of pick-id-arrays that each total exactly `val`
+  // using floor cards and houses (can use subsets).
+  // For simplicity: find all subsets of floor cards (and houses treated as single-value items)
+  // whose total equals val. Each valid subset is one capture group.
+  // The player can capture multiple non-overlapping groups in one play.
+  function findCaptures(val, floor, houses) {
+    // Combine floor cards + houses into items
+    const items = [
+      ...floor.map(c => ({ id: c.id, val: c.val })),
+      ...houses.map(h => ({ id: 'house_' + h.value + '_' + h.owner, val: h.value }))
+    ];
+
+    // Find all non-empty subsets that total val
+    const validSubsets = [];
+    const n = items.length;
+    for (let mask = 1; mask < (1 << n); mask++) {
+      let total = 0;
+      const ids = [];
+      for (let i = 0; i < n; i++) {
+        if (mask & (1 << i)) { total += items[i].val; ids.push(items[i].id); }
+      }
+      if (total === val) validSubsets.push(ids);
+    }
+
+    // Return single best subset for CPU (highest scoring), wrapped in array
+    // (multi-group captures are advanced; CPU uses single best group)
+    if (validSubsets.length === 0) return [];
+    return [validSubsets.reduce((a, b) => {
+      const scoreA = a.reduce((s, id) => {
+        const fc = floor.find(c => c.id === id);
+        return s + (fc ? scoreCard(fc) : 0);
+      }, 0);
+      const scoreB = b.reduce((s, id) => {
+        const fc = floor.find(c => c.id === id);
+        return s + (fc ? scoreCard(fc) : 0);
+      }, 0);
+      return scoreA >= scoreB ? a : b;
+    })];
+  }
+
+  // ── Remove picks from floor/houses, return captured card objects ─
+  function removePicks(picks) {
+    const captured = [];
+    for (const id of picks) {
+      if (id.startsWith('house_')) {
+        const parts = id.split('_');
+        const val   = parseInt(parts[1], 10);
+        const owner = parts[2];
+        const hi    = G.houses.findIndex(h => h.value === val && h.owner === owner);
+        if (hi !== -1) {
+          captured.push(...G.houses[hi].cards);
+          G.houses.splice(hi, 1);
+        }
+      } else {
+        const fi = G.floor.findIndex(c => c.id === id);
+        if (fi !== -1) {
+          captured.push(G.floor[fi]);
+          G.floor.splice(fi, 1);
+        }
+      }
+    }
+    return captured;
+  }
+
+  // ── End of game ────────────────────────────────────────────────
+  function endGame() {
+    G.over = true;
+    // Remaining floor cards go to last capturer
+    if (G.floor.length > 0 || G.houses.length > 0) {
+      const leftover = [...G.floor, ...G.houses.flatMap(h => h.cards)];
+      if (G.lastCapture === 'player') G.playerPile.push(...leftover);
+      else                            G.cpuPile.push(...leftover);
+      G.floor   = [];
+      G.houses  = [];
+    }
+
+    const pCard = calcScore(G.playerPile);
+    const cCard = calcScore(G.cpuPile);
+    const pTotal = pCard + G.playerSeeps * 50;
+    const cTotal = cCard + G.cpuSeeps    * 50;
+
+    const goTitle  = document.getElementById('go-title');
+    const goDetail = document.getElementById('go-detail');
+    const goBd     = document.getElementById('go-breakdown');
+
+    if (pTotal > cTotal)       { goTitle.textContent = 'You win!'; goTitle.style.color = '#7adf7a'; }
+    else if (pTotal < cTotal)  { goTitle.textContent = 'CPU wins.'; goTitle.style.color = '#f58070'; }
+    else                       { goTitle.textContent = "It's a tie!"; goTitle.style.color = '#f5d060'; }
+
+    goDetail.textContent = `Final score — You: ${pTotal}  |  CPU: ${cTotal}`;
+    goBd.textContent = `Cards: You ${pCard} / CPU ${cCard} · Seeps (×50): You ${G.playerSeeps} / CPU ${G.cpuSeeps}`;
+
+    document.getElementById('game-over').style.display = 'block';
+    render();
+  }
+
+  function calcScore(pile) {
+    return pile.reduce((s, c) => s + scoreCard(c), 0);
+  }
+
+  // ── Utilities ──────────────────────────────────────────────────
+  function descCards(cards) {
+    return cards.filter(c => c.suit !== '?').map(c => c.rank + c.suit).join(', ');
+  }
+
+  function log(msg, cls) {
+    const el = document.getElementById('game-log');
+    const line = document.createElement('div');
+    if (cls) line.className = cls;
+    line.textContent = msg;
+    el.appendChild(line);
+    el.scrollTop = el.scrollHeight;
+  }
+
+  // ── Service worker registration ────────────────────────────────
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js');
+  }
+</script>
+
+</body>
+</html>
