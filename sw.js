@@ -1,4 +1,4 @@
-const CACHE = 'seep-v2';
+const CACHE = 'seep-v3';
 const ASSETS = [
   './index.html',
   './manifest.json',
