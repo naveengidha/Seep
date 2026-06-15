@@ -2,7 +2,7 @@
   "name": "Seep – Card Game Guide",
   "short_name": "Seep",
   "description": "Learn and play the card game Seep",
-  "start_url": "./seep-rules.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#1a3a1a",
   "theme_color": "#1a3a1a",

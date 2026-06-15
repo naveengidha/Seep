@@ -1,6 +1,6 @@
-const CACHE = 'seep-v1';
+const CACHE = 'seep-v2';
 const ASSETS = [
-  './seep-rules.html',
+  './index.html',
   './manifest.json',
   './icon-192.png',
   './icon-512.png'
