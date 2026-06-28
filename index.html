@@ -324,8 +324,112 @@
 
     /* ── Game layout ─────────────────────────────────────────── */
     #game-area {
-      max-width: 760px;
+      max-width: 900px;
       margin: 0 auto;
+    }
+
+    /* ── Table layout: 3-row stack ────────────────────────────── */
+    #table-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Top row: all three opponents side by side */
+    #opponents-area {
+      background: #16201a;
+      border: 1px solid #3a5a3a;
+      border-radius: 10px;
+      padding: 0.6rem 1rem;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .opponent-slot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+      flex: 1;
+    }
+
+    .opponent-slot-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #7aaa6a;
+      text-align: center;
+    }
+
+    .opponent-slot.active-turn .opponent-slot-label {
+      color: #f5d060;
+    }
+
+
+    /* Mini face-down pile with card count badge */
+    .mini-pile {
+      position: relative;
+      width: 36px;
+      height: 50px;
+    }
+
+    .mini-pile .pcard.face-down {
+      width: 36px;
+      height: 50px;
+    }
+
+    .mini-pile .card-count {
+      position: absolute;
+      top: -7px;
+      right: -7px;
+      background: #2d5a2d;
+      border: 1px solid #7aaa6a;
+      color: #c8e0b0;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 0.65rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+
+    /* Floor */
+    #floor-area {
+      background: #1e421e;
+      border: 1px solid #4a7a4a;
+      border-radius: 10px;
+      padding: 0.8rem 1rem;
+      min-height: 110px;
+    }
+
+    #floor-cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 0.4rem;
+    }
+
+    /* Your hand */
+    #hand-area {
+      background: #1a3a1a;
+      border: 1px solid #3a6a3a;
+      border-radius: 10px;
+      padding: 0.8rem 1rem;
+    }
+
+    #hand-cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 0.4rem;
     }
 
     .game-status-bar {
@@ -344,6 +448,8 @@
       margin-bottom: 0.55rem;
     }
 
+    .status-team { text-align: left; }
+    .status-team.right { text-align: right; }
     .status-player { text-align: left; }
     .status-cpu    { text-align: right; }
 
@@ -369,6 +475,30 @@
       padding: 0 0.3rem;
     }
 
+    .team-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #6a9a5a;
+      margin-bottom: 1px;
+    }
+
+    .turn-indicator {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #f5d060;
+      margin-left: 4px;
+      vertical-align: middle;
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
     .status-meta {
       display: flex;
       justify-content: space-between;
@@ -387,24 +517,6 @@
       color: #7aaa6a;
       margin-bottom: 0.4rem;
       text-align: center;
-    }
-
-    /* Floor */
-    #floor-area {
-      background: #1e421e;
-      border: 1px solid #4a7a4a;
-      border-radius: 10px;
-      padding: 1rem 1.2rem;
-      margin-bottom: 1rem;
-      min-height: 110px;
-    }
-
-    #floor-cards {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 0.5rem;
-      margin-top: 0.4rem;
     }
 
     /* Playing cards */
@@ -430,8 +542,8 @@
 
     .pcard.red { color: #c0201c; }
 
-    .pcard .rank { font-size: 1rem; line-height: 1; }
-    .pcard .suit { font-size: 0.9rem; line-height: 1; margin-top: 2px; }
+    .pcard .rank { font-size: 1.25rem; line-height: 1; }
+    .pcard .suit { font-size: 1.1rem; line-height: 1; margin-top: 2px; }
 
     /* Selectable hand card */
     .pcard.hand-card {
@@ -464,23 +576,6 @@
       font-size: 0.6rem;
       color: #b07010;
       font-weight: bold;
-    }
-
-    /* Player hand */
-    #hand-area {
-      background: #1a3a1a;
-      border: 1px solid #3a6a3a;
-      border-radius: 10px;
-      padding: 1rem 1.2rem;
-      margin-bottom: 1rem;
-    }
-
-    #hand-cards {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 0.5rem;
-      margin-top: 0.4rem;
     }
 
     /* Action panel */
@@ -575,23 +670,6 @@
 
     #game-over button:hover { background: #ffe080; }
 
-    /* CPU hand (face-down row) */
-    #cpu-area {
-      background: #163016;
-      border: 1px solid #3a5a3a;
-      border-radius: 10px;
-      padding: 0.8rem 1.2rem;
-      margin-bottom: 1rem;
-    }
-
-    #cpu-cards {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 0.4rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
     .pcard.face-down {
       background: repeating-linear-gradient(135deg, #2a5a2a 0px, #2a5a2a 4px, #1a3a1a 4px, #1a3a1a 8px);
       border-color: #4a7a4a;
@@ -617,13 +695,14 @@
 <body>
 
 <h1>&#9824; Seep</h1>
-<p class="subtitle">2-player card game &nbsp;·&nbsp; Quick-start guide</p>
+<p class="subtitle">Card game guide &nbsp;·&nbsp; 2v2</p>
 
 <nav>
   <button class="active" onclick="showTab('rules')">Rules</button>
   <button onclick="showTab('scoring')">Scoring</button>
   <button onclick="showTab('learn')">Learn in 4 Steps</button>
   <button onclick="showTab('tips')">Strategy Tips</button>
+  <button onclick="showTab('twovtwo')">2v2</button>
   <button onclick="showTab('quiz')">Quiz</button>
 </nav>
 
@@ -853,6 +932,133 @@
 
 </div>
 
+<!-- ============ 2v2 ============ -->
+<div id="twovtwo" class="tab">
+
+  <div class="card">
+    <h2>2v2 Format</h2>
+    <p>Seep is most commonly played as a 4-player partnership game. Partners sit <strong>opposite each other</strong> and combine their captured cards for scoring. Communication about specific cards is not allowed unless your group uses house rules.</p>
+    <div class="example"><strong>Key difference from 1v1:</strong> You must think about both your partner's position and your opponents' opportunities — every play affects three other players.</div>
+  </div>
+
+  <div class="card">
+    <h2>Core Objectives</h2>
+    <ul>
+      <li>Capture valuable scoring cards.</li>
+      <li>Create and protect houses.</li>
+      <li>Set up your partner for strong turns.</li>
+      <li>Prevent opponents from making seeps.</li>
+      <li>Control the flow of the table.</li>
+    </ul>
+    <p style="margin-top:0.8rem; color:#adc89a; font-size:0.9rem;">Winning teams consistently avoid giving away easy opportunities.</p>
+  </div>
+
+  <div class="card">
+    <h2>Cards to Track</h2>
+    <p>Always pay attention to:</p>
+    <ul>
+      <li><span class="spade">&#9824;</span> High spades</li>
+      <li><span class="diamond">&#9830;</span> 10♦</li>
+      <li>All aces</li>
+      <li>Kings, Queens, and Jacks already played</li>
+      <li>Cards used to capture houses</li>
+    </ul>
+    <p style="margin-top:0.8rem;">Memory is a major skill. Ask yourself:</p>
+    <ul>
+      <li>Which capture cards are still unplayed?</li>
+      <li>Can an opponent steal this house?</li>
+      <li>Can my partner protect it?</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Think in Partnerships</h2>
+    <p>Before every play, ask:</p>
+    <ul>
+      <li>Does this help my partner?</li>
+      <li>Does this expose my partner?</li>
+      <li>Am I leaving an easy capture for the next opponent?</li>
+    </ul>
+    <div class="example"><strong>Remember:</strong> Sometimes the best play is not your highest-scoring move.</div>
+    <p style="margin-top:0.8rem;">Your actions communicate indirectly:</p>
+    <ul>
+      <li>Building a house often signals you hold the capture card.</li>
+      <li>Refusing an obvious capture may signal danger.</li>
+      <li>Protecting a house may indicate your partner should avoid changing the table.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Building Houses in 2v2</h2>
+    <p>Build only when:</p>
+    <ul>
+      <li>You already hold the capture card.</li>
+      <li>Your partner can help defend it.</li>
+      <li>The capture card is unlikely to be in an opponent's hand.</li>
+    </ul>
+    <div class="warning">&#9888; Avoid building large houses early, multiple houses at once, or houses that require commonly held values. Large houses attract attention and are hard to protect.</div>
+  </div>
+
+  <div class="card">
+    <h2>Table Position</h2>
+    <p>The player <strong>immediately after your turn</strong> is the most dangerous. Avoid leaving:</p>
+    <ul>
+      <li>Obvious captures</li>
+      <li>Simple additions to 13</li>
+      <li>Easy seep opportunities</li>
+    </ul>
+    <div class="example"><strong>Tip:</strong> A good defensive turn may score nothing while preventing a huge point swing.</div>
+  </div>
+
+  <div class="card">
+    <h2>Preventing Seeps</h2>
+    <p>Seeps create major point swings. Constantly ask:</p>
+    <ul>
+      <li>Can the next player clear the table?</li>
+      <li>Can an opponent build toward a future seep?</li>
+      <li>Should I leave an extra card to block a seep?</li>
+    </ul>
+    <p style="margin-top:0.8rem; color:#adc89a; font-size:0.9rem;">If you cannot improve your position, focus on denying a seep. Defensive play wins many games.</p>
+  </div>
+
+  <div class="card">
+    <h2>Endgame Strategy</h2>
+    <p>As the deck runs low:</p>
+    <ul>
+      <li>Count remaining high-value cards.</li>
+      <li>Remember which capture values are gone.</li>
+      <li>Protect your team's houses carefully.</li>
+      <li>Consider what cards opponents are likely holding.</li>
+    </ul>
+    <p style="margin-top:0.8rem; color:#adc89a; font-size:0.9rem;">Late-round mistakes are costly — opponents have more information.</p>
+  </div>
+
+  <div class="card">
+    <h2>Common Beginner Mistakes</h2>
+    <ul>
+      <li>Building houses without protection.</li>
+      <li>Ignoring the value of table position.</li>
+      <li>Focusing only on immediate captures.</li>
+      <li>Forgetting about partnership strategy.</li>
+      <li>Chasing low-value cards while giving away a seep.</li>
+      <li>Leaving easy captures for the next player.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>The Golden Rule</h2>
+    <p>Before every turn, ask:</p>
+    <ul>
+      <li>What can <strong>I</strong> capture?</li>
+      <li>What can the <strong>next player</strong> capture?</li>
+      <li>What does <strong>my partner</strong> need?</li>
+      <li>Can <strong>anyone</strong> make a seep?</li>
+    </ul>
+    <div class="example">Strong Seep players think <strong>one full rotation ahead</strong>.</div>
+  </div>
+
+</div>
+
 <!-- ============ QUIZ ============ -->
 <div id="quiz" class="tab">
 
@@ -880,35 +1086,51 @@
 
   <div class="game-status-bar">
     <div class="status-scores">
-      <div class="status-player">
-        <div class="score-label">You</div>
-        <div class="score-val" id="player-score">0</div>
+      <div class="status-team">
+        <div class="team-label">Team A</div>
+        <div class="score-label">You &amp; Partner<span id="turn-dot-a" class="turn-indicator" style="display:none"></span></div>
+        <div class="score-val" id="team-a-score">0</div>
       </div>
       <div class="status-vs">vs</div>
-      <div class="status-cpu">
-        <div class="score-label">CPU</div>
-        <div class="score-val" id="cpu-score">0</div>
+      <div class="status-team right">
+        <div class="team-label">Team B</div>
+        <div class="score-label"><span id="turn-dot-b" class="turn-indicator" style="display:none"></span>CPU 1 &amp; CPU 2</div>
+        <div class="score-val" id="team-b-score">0</div>
       </div>
     </div>
     <div class="status-meta">
       <span>&#127136; Deck: <strong id="deck-count">44</strong></span>
-      <span>Seeps — You: <strong id="player-seeps">0</strong> &nbsp; CPU: <strong id="cpu-seeps">0</strong></span>
+      <span>Seeps — A: <strong id="team-a-seeps">0</strong> &nbsp; B: <strong id="team-b-seeps">0</strong></span>
     </div>
   </div>
 
-  <div id="cpu-area">
-    <div class="game-section-label">CPU hand</div>
-    <div id="cpu-cards"></div>
-  </div>
+  <div id="table-layout">
 
-  <div id="floor-area">
-    <div class="game-section-label">Floor</div>
-    <div id="floor-cards"></div>
-  </div>
+    <div id="opponents-area">
+      <div class="opponent-slot" id="cpu1-slot">
+        <div class="opponent-slot-label" id="cpu1-label">CPU 1</div>
+        <div class="mini-pile" id="cpu1-pile"></div>
+      </div>
+      <div class="opponent-slot" id="partner-slot">
+        <div class="opponent-slot-label" id="partner-label">Partner</div>
+        <div class="mini-pile" id="partner-pile"></div>
+      </div>
+      <div class="opponent-slot" id="cpu2-slot">
+        <div class="opponent-slot-label" id="cpu2-label">CPU 2</div>
+        <div class="mini-pile" id="cpu2-pile"></div>
+      </div>
+    </div>
 
-  <div id="hand-area">
-    <div class="game-section-label">Your hand — click a card to select it</div>
-    <div id="hand-cards"></div>
+    <div id="floor-area">
+      <div class="game-section-label">Floor</div>
+      <div id="floor-cards"></div>
+    </div>
+
+    <div id="hand-area">
+      <div class="game-section-label">Your hand — click a card to select it</div>
+      <div id="hand-cards"></div>
+    </div>
+
   </div>
 
   <div id="action-panel">
@@ -931,7 +1153,7 @@
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    const labels = ['rules','scoring','learn','tips','quiz','play'];
+    const labels = ['rules','scoring','learn','tips','twovtwo','quiz','play'];
     const buttons = document.querySelectorAll('nav button');
     const idx = labels.indexOf(id);
     if (idx >= 0 && idx < buttons.length) buttons[idx].classList.add('active');
@@ -1106,7 +1328,8 @@
   buildQuiz();
 
   // ═══════════════════════════════════════════════════════════════
-  // GAME ENGINE
+  // GAME ENGINE  –  2v2 (You + Partner  vs  CPU 1 + CPU 2)
+  // Turn order: player → cpu1 → partner → cpu2 → repeat
   // ═══════════════════════════════════════════════════════════════
 
   const SUITS   = ['♠','♥','♦','♣'];
@@ -1122,10 +1345,9 @@
   }
 
   function scoreCard(c) {
-    // spades = face value; 10♦ = 6; other aces = 1
-    if (c.suit === '♠')              return cardVal(c.rank);
-    if (c.rank === '10' && c.suit === '♦') return 6;
-    if (c.rank === 'A')              return 1;
+    if (c.suit === '♠')                          return cardVal(c.rank);
+    if (c.rank === '10' && c.suit === '♦')        return 6;
+    if (c.rank === 'A')                           return 1;
     return 0;
   }
 
@@ -1146,36 +1368,45 @@
   }
 
   // ── Game state ─────────────────────────────────────────────────
+  // Teams: A = player + partner,  B = cpu1 + cpu2
+  // Turn order index: 0=player, 1=cpu1, 2=partner, 3=cpu2
   let G = {};
+
+  const TURN_ORDER = ['player', 'cpu1', 'partner', 'cpu2'];
 
   function startGame() {
     const deck = shuffle(makeDeck());
     G = {
       deck,
-      floor:        [],          // plain cards on floor
-      houses:       [],          // {cards: [...], value: n, owner: 'player'|'cpu'}
-      playerHand:   [],
-      cpuHand:      [],
-      playerPile:   [],
-      cpuPile:      [],
-      playerSeeps:  0,
-      cpuSeeps:     0,
-      turn:         'player',    // 'player' | 'cpu'
-      selectedCard: null,        // card object from playerHand
-      floorPicks:   [],          // floor card ids selected for capture
-      over:         false,
-      lastCapture:  'player',    // who last captured (for leftover cards at end)
+      floor:          [],
+      houses:         [],
+      playerHand:     [],
+      cpu1Hand:       [],
+      partnerHand:    [],
+      cpu2Hand:       [],
+      teamAPile:      [],   // player + partner captures
+      teamBPile:      [],   // cpu1 + cpu2 captures
+      teamASeeps:     0,
+      teamBSeeps:     0,
+      turnIdx:        0,    // index into TURN_ORDER
+      selectedCard:   null,
+      floorPicks:     [],
+      over:           false,
+      lastCaptureTeam: 'A',
     };
 
-    // deal 4 to each, 4 to floor
-    G.playerHand = G.deck.splice(0, 4);
-    G.cpuHand    = G.deck.splice(0, 4);
-    G.floor      = G.deck.splice(0, 4);
+    G.playerHand  = G.deck.splice(0, 4);
+    G.cpu1Hand    = G.deck.splice(0, 4);
+    G.partnerHand = G.deck.splice(0, 4);
+    G.cpu2Hand    = G.deck.splice(0, 4);
+    G.floor       = G.deck.splice(0, 4);
 
     document.getElementById('game-over').style.display = 'none';
-    log('New game started. Your turn.', 'log-player');
+    log('New 2v2 game started. Your turn.', 'log-player');
     render();
   }
+
+  function currentTurn() { return TURN_ORDER[G.turnIdx]; }
 
   // ── Rendering ─────────────────────────────────────────────────
   function cardHTML(c, classes = '', extra = '') {
@@ -1186,12 +1417,38 @@
     </div>`;
   }
 
+  function miniPileHTML(count) {
+    if (count === 0) return '<span style="font-size:0.7rem;color:#4a7a4a;">—</span>';
+    return `<div class="pcard face-down"></div><span class="card-count">${count}</span>`;
+  }
+
   function render() {
-    // CPU hand (face-down)
-    const cpuEl = document.getElementById('cpu-cards');
-    cpuEl.innerHTML = G.cpuHand.map(() =>
-      `<div class="pcard face-down"></div>`
-    ).join('');
+    const who = currentTurn();
+
+    // Opponent slots — mini pile + count
+    const opponentData = [
+      { id: 'cpu1',    slotId: 'cpu1-slot',    pileId: 'cpu1-pile',    labelId: 'cpu1-label',    count: G.cpu1Hand.length,    name: 'CPU 1'    },
+      { id: 'partner', slotId: 'partner-slot', pileId: 'partner-pile', labelId: 'partner-label', count: G.partnerHand.length, name: 'Partner' },
+      { id: 'cpu2',    slotId: 'cpu2-slot',    pileId: 'cpu2-pile',    labelId: 'cpu2-label',    count: G.cpu2Hand.length,    name: 'CPU 2'    },
+    ];
+    for (const op of opponentData) {
+      const slot  = document.getElementById(op.slotId);
+      const pile  = document.getElementById(op.pileId);
+      const label = document.getElementById(op.labelId);
+      const isActive = op.id === who;
+      slot.classList.toggle('active-turn', isActive);
+      pile.innerHTML = miniPileHTML(op.count);
+      label.textContent = op.name;
+    }
+
+    // Highlight active area border
+    document.getElementById('opponents-area').style.borderColor = (who !== 'player') ? '#f5d060' : '';
+    document.getElementById('hand-area').style.borderColor      = (who === 'player')  ? '#f5d060' : '';
+
+    // Turn dots
+    const teamATurn = who === 'player' || who === 'partner';
+    document.getElementById('turn-dot-a').style.display = teamATurn ? 'inline-block' : 'none';
+    document.getElementById('turn-dot-b').style.display = teamATurn ? 'none' : 'inline-block';
 
     // Floor
     const floorEl = document.getElementById('floor-cards');
@@ -1204,14 +1461,14 @@
         return cardHTML(c, 'floor-card' + sel, `onclick="toggleFloorPick('${c.id}')" title="Click to include in capture"`);
       }).join('');
       const houses = G.houses.map(h => {
-        const sel = picks.has('house_' + h.value + '_' + h.owner) ? ' floor-pick' : '';
         const hid = 'house_' + h.value + '_' + h.owner;
-        const label = h.owner === 'player' ? 'Your house' : 'CPU house';
+        const sel = picks.has(hid) ? ' floor-pick' : '';
+        const label = h.owner === 'player' ? 'Your house' : h.owner === 'partner' ? 'Partner house' : h.owner + ' house';
         return `<div class="pcard house-card floor-card${sel}" data-id="${hid}"
             onclick="toggleFloorPick('${hid}')" title="${label} (${h.value})">
           <span class="rank">${h.value}</span>
           <span class="suit">&#127968;</span>
-          <span class="house-label">${h.owner === 'player' ? 'yours' : 'cpu'}</span>
+          <span class="house-label">${h.owner}</span>
         </div>`;
       }).join('');
       floorEl.innerHTML = plain + houses;
@@ -1226,26 +1483,28 @@
     }).join('');
 
     // Buttons
-    const canCapture = G.selectedCard && G.floorPicks.length > 0 && G.turn === 'player';
-    const canDiscard = !!G.selectedCard && G.turn === 'player';
+    const isMyTurn = who === 'player';
+    const canCapture = isMyTurn && G.selectedCard && G.floorPicks.length > 0;
+    const canDiscard = isMyTurn && !!G.selectedCard;
     document.getElementById('btn-capture').disabled = !canCapture;
     document.getElementById('btn-discard').disabled = !canDiscard;
 
     // Status bar
-    document.getElementById('deck-count').textContent    = G.deck.length;
-    document.getElementById('player-score').textContent  = calcScore(G.playerPile) + G.playerSeeps * 50;
-    document.getElementById('cpu-score').textContent     = calcScore(G.cpuPile)    + G.cpuSeeps    * 50;
-    document.getElementById('player-seeps').textContent  = G.playerSeeps;
-    document.getElementById('cpu-seeps').textContent     = G.cpuSeeps;
+    document.getElementById('deck-count').textContent     = G.deck.length;
+    document.getElementById('team-a-score').textContent   = calcScore(G.teamAPile) + G.teamASeeps * 50;
+    document.getElementById('team-b-score').textContent   = calcScore(G.teamBPile) + G.teamBSeeps * 50;
+    document.getElementById('team-a-seeps').textContent   = G.teamASeeps;
+    document.getElementById('team-b-seeps').textContent   = G.teamBSeeps;
 
     // Hint
     const hint = document.getElementById('action-hint');
-    if (G.turn === 'cpu') {
-      hint.textContent = 'CPU is thinking…';
+    if (!isMyTurn) {
+      const names = { cpu1: 'CPU 1', partner: 'Partner', cpu2: 'CPU 2' };
+      hint.textContent = `Waiting for ${names[who]}…`;
     } else if (!G.selectedCard) {
-      hint.textContent = 'Select a card from your hand.';
+      hint.textContent = 'Your turn — select a card from your hand.';
     } else if (G.floorPicks.length === 0) {
-      hint.textContent = `${G.selectedCard.rank}${G.selectedCard.suit} selected (val ${G.selectedCard.val}). Click floor cards to mark for capture, or Discard.`;
+      hint.textContent = `${G.selectedCard.rank}${G.selectedCard.suit} selected (val ${G.selectedCard.val}). Click floor cards to capture, or Discard.`;
     } else {
       const total = pickedTotal();
       hint.textContent = `Capturing with ${G.selectedCard.rank}${G.selectedCard.suit} (${G.selectedCard.val}). Floor picks total: ${total}. ${total === G.selectedCard.val ? '✓ Valid' : '✗ Totals must match'}`;
@@ -1254,7 +1513,7 @@
 
   // ── Selection helpers ──────────────────────────────────────────
   function selectHandCard(id) {
-    if (G.turn !== 'player' || G.over) return;
+    if (currentTurn() !== 'player' || G.over) return;
     const c = G.playerHand.find(x => x.id === id);
     if (!c) return;
     G.selectedCard = (G.selectedCard && G.selectedCard.id === id) ? null : c;
@@ -1263,7 +1522,7 @@
   }
 
   function toggleFloorPick(id) {
-    if (G.turn !== 'player' || G.over || !G.selectedCard) return;
+    if (currentTurn() !== 'player' || G.over || !G.selectedCard) return;
     const idx = G.floorPicks.indexOf(id);
     if (idx === -1) G.floorPicks.push(id);
     else            G.floorPicks.splice(idx, 1);
@@ -1279,8 +1538,7 @@
   function pickedTotal() {
     return G.floorPicks.reduce((sum, id) => {
       if (id.startsWith('house_')) {
-        const parts = id.split('_');
-        return sum + parseInt(parts[1], 10);
+        return sum + parseInt(id.split('_')[1], 10);
       }
       const c = G.floor.find(x => x.id === id);
       return c ? sum + c.val : sum;
@@ -1289,7 +1547,7 @@
 
   // ── Player actions ─────────────────────────────────────────────
   function doCapture() {
-    if (!G.selectedCard || G.floorPicks.length === 0 || G.turn !== 'player') return;
+    if (!G.selectedCard || G.floorPicks.length === 0 || currentTurn() !== 'player') return;
 
     const total = pickedTotal();
     if (total !== G.selectedCard.val) {
@@ -1299,13 +1557,13 @@
 
     const captured = removePicks(G.floorPicks);
     captured.push(G.selectedCard);
-    G.playerPile.push(...captured);
+    G.teamAPile.push(...captured);
     G.playerHand = G.playerHand.filter(c => c.id !== G.selectedCard.id);
-    G.lastCapture = 'player';
+    G.lastCaptureTeam = 'A';
 
     const seep = G.floor.length === 0 && G.houses.length === 0;
     if (seep) {
-      G.playerSeeps++;
+      G.teamASeeps++;
       log(`You captured ${descCards(captured)} — SEEP! (+50 bonus)`, 'log-seep');
     } else {
       log(`You captured ${descCards(captured)}.`, 'log-player');
@@ -1313,59 +1571,69 @@
 
     G.selectedCard = null;
     G.floorPicks   = [];
-    afterTurn('player');
+    afterTurn();
   }
 
   function doDiscard() {
-    if (!G.selectedCard || G.turn !== 'player') return;
+    if (!G.selectedCard || currentTurn() !== 'player') return;
     G.floor.push(G.selectedCard);
     G.playerHand = G.playerHand.filter(c => c.id !== G.selectedCard.id);
     log(`You discarded ${G.selectedCard.rank}${G.selectedCard.suit}.`, 'log-player');
     G.selectedCard = null;
     G.floorPicks   = [];
-    afterTurn('player');
+    afterTurn();
   }
 
   // ── Post-turn logic ────────────────────────────────────────────
-  function afterTurn(who) {
-    // Deal new hands if both are empty
-    if (G.playerHand.length === 0 && G.cpuHand.length === 0) {
-      if (G.deck.length >= 8) {
-        G.playerHand = G.deck.splice(0, 4);
-        G.cpuHand    = G.deck.splice(0, 4);
+  function afterTurn() {
+    if (G.playerHand.length === 0 && G.cpu1Hand.length === 0 &&
+        G.partnerHand.length === 0 && G.cpu2Hand.length === 0) {
+      if (G.deck.length >= 16) {
+        G.playerHand  = G.deck.splice(0, 4);
+        G.cpu1Hand    = G.deck.splice(0, 4);
+        G.partnerHand = G.deck.splice(0, 4);
+        G.cpu2Hand    = G.deck.splice(0, 4);
         log('New hands dealt.', '');
       } else if (G.deck.length > 0) {
-        // deal whatever's left evenly
+        const hands = [G.playerHand, G.cpu1Hand, G.partnerHand, G.cpu2Hand];
+        let i = 0;
         while (G.deck.length > 0) {
-          if (G.deck.length) G.playerHand.push(G.deck.shift());
-          if (G.deck.length) G.cpuHand.push(G.deck.shift());
+          hands[i % 4].push(G.deck.shift());
+          i++;
         }
         log('Final cards dealt.', '');
       }
     }
 
-    // Check end of game
-    if (G.playerHand.length === 0 && G.cpuHand.length === 0 && G.deck.length === 0) {
+    if (G.playerHand.length === 0 && G.cpu1Hand.length === 0 &&
+        G.partnerHand.length === 0 && G.cpu2Hand.length === 0 && G.deck.length === 0) {
       endGame();
       return;
     }
 
-    G.turn = (who === 'player') ? 'cpu' : 'player';
+    G.turnIdx = (G.turnIdx + 1) % 4;
     render();
 
-    if (G.turn === 'cpu') {
+    const who = currentTurn();
+    if (who !== 'player') {
       setTimeout(cpuTurn, 900);
     }
   }
 
-  // ── CPU AI ─────────────────────────────────────────────────────
+  // ── CPU / Partner AI ───────────────────────────────────────────
   function cpuTurn() {
-    if (G.turn !== 'cpu' || G.over) return;
+    const who = currentTurn();
+    if (who === 'player' || G.over) return;
 
-    // Find all possible captures for each cpu hand card
-    let bestPlay = null; // {card, picks, score}
+    const hand = who === 'cpu1'    ? G.cpu1Hand
+               : who === 'partner' ? G.partnerHand
+               :                     G.cpu2Hand;
+    const isTeamA = who === 'partner';
+    const pile    = isTeamA ? G.teamAPile : G.teamBPile;
 
-    for (const card of G.cpuHand) {
+    let bestPlay = null;
+
+    for (const card of hand) {
       const captures = findCaptures(card.val, G.floor, G.houses);
       for (const picks of captures) {
         const captured = picks.map(id => {
@@ -1377,9 +1645,8 @@
         }).filter(Boolean);
 
         const pts = captured.reduce((s, c) => s + scoreCard(c), 0) + scoreCard(card);
-        const isSeep = (picks.length === G.floor.length + G.houses.length);
-        const seepBonus = isSeep ? 100 : 0; // heavily weight seeps
-        const s = pts + seepBonus;
+        const isSeep = picks.length === G.floor.length + G.houses.length;
+        const s = pts + (isSeep ? 100 : 0);
 
         if (!bestPlay || s > bestPlay.score) {
           bestPlay = { card, picks, score: s };
@@ -1387,57 +1654,55 @@
       }
     }
 
+    const names = { cpu1: 'CPU 1', partner: 'Partner', cpu2: 'CPU 2' };
+    const logClass = isTeamA ? 'log-player' : 'log-cpu';
+
     if (bestPlay) {
-      // Execute capture
       const captured = removePicks(bestPlay.picks);
       captured.push(bestPlay.card);
-      G.cpuPile.push(...captured);
-      G.cpuHand = G.cpuHand.filter(c => c.id !== bestPlay.card.id);
-      G.lastCapture = 'cpu';
+      pile.push(...captured);
+      // remove played card from hand
+      if (who === 'cpu1')    G.cpu1Hand    = G.cpu1Hand.filter(c => c.id !== bestPlay.card.id);
+      if (who === 'partner') G.partnerHand = G.partnerHand.filter(c => c.id !== bestPlay.card.id);
+      if (who === 'cpu2')    G.cpu2Hand    = G.cpu2Hand.filter(c => c.id !== bestPlay.card.id);
+      G.lastCaptureTeam = isTeamA ? 'A' : 'B';
 
       const seep = G.floor.length === 0 && G.houses.length === 0;
       if (seep) {
-        G.cpuSeeps++;
-        log(`CPU captured ${descCards(captured)} — SEEP! (+50 bonus)`, 'log-seep');
+        if (isTeamA) G.teamASeeps++; else G.teamBSeeps++;
+        log(`${names[who]} captured ${descCards(captured)} — SEEP! (+50 bonus)`, 'log-seep');
       } else {
-        log(`CPU captured ${descCards(captured)}.`, 'log-cpu');
+        log(`${names[who]} captured ${descCards(captured)}.`, logClass);
       }
     } else {
-      // Discard: prefer a card that doesn't create easy captures for player
-      const discard = chooseCpuDiscard();
+      const discard = chooseCpuDiscard(hand);
       G.floor.push(discard);
-      G.cpuHand = G.cpuHand.filter(c => c.id !== discard.id);
-      log(`CPU discarded ${discard.rank}${discard.suit}.`, 'log-cpu');
+      if (who === 'cpu1')    G.cpu1Hand    = G.cpu1Hand.filter(c => c.id !== discard.id);
+      if (who === 'partner') G.partnerHand = G.partnerHand.filter(c => c.id !== discard.id);
+      if (who === 'cpu2')    G.cpu2Hand    = G.cpu2Hand.filter(c => c.id !== discard.id);
+      log(`${names[who]} discarded ${discard.rank}${discard.suit}.`, logClass);
     }
 
-    afterTurn('cpu');
+    afterTurn();
   }
 
-  function chooseCpuDiscard() {
-    // Prefer discarding a card whose value can't easily be matched on the floor
+  function chooseCpuDiscard(hand) {
     const floorVals = G.floor.map(c => c.val);
     let best = null, bestRisk = Infinity;
-    for (const card of G.cpuHand) {
+    for (const card of hand) {
       const risk = floorVals.filter(v => v === card.val).length;
       if (risk < bestRisk) { bestRisk = risk; best = card; }
     }
-    return best || G.cpuHand[0];
+    return best || hand[0];
   }
 
   // ── Capture logic ──────────────────────────────────────────────
-  // Returns array of pick-id-arrays that each total exactly `val`
-  // using floor cards and houses (can use subsets).
-  // For simplicity: find all subsets of floor cards (and houses treated as single-value items)
-  // whose total equals val. Each valid subset is one capture group.
-  // The player can capture multiple non-overlapping groups in one play.
   function findCaptures(val, floor, houses) {
-    // Combine floor cards + houses into items
     const items = [
       ...floor.map(c => ({ id: c.id, val: c.val })),
       ...houses.map(h => ({ id: 'house_' + h.value + '_' + h.owner, val: h.value }))
     ];
 
-    // Find all non-empty subsets that total val
     const validSubsets = [];
     const n = items.length;
     for (let mask = 1; mask < (1 << n); mask++) {
@@ -1449,23 +1714,16 @@
       if (total === val) validSubsets.push(ids);
     }
 
-    // Return single best subset for CPU (highest scoring), wrapped in array
-    // (multi-group captures are advanced; CPU uses single best group)
     if (validSubsets.length === 0) return [];
     return [validSubsets.reduce((a, b) => {
-      const scoreA = a.reduce((s, id) => {
+      const score = arr => arr.reduce((s, id) => {
         const fc = floor.find(c => c.id === id);
         return s + (fc ? scoreCard(fc) : 0);
       }, 0);
-      const scoreB = b.reduce((s, id) => {
-        const fc = floor.find(c => c.id === id);
-        return s + (fc ? scoreCard(fc) : 0);
-      }, 0);
-      return scoreA >= scoreB ? a : b;
+      return score(a) >= score(b) ? a : b;
     })];
   }
 
-  // ── Remove picks from floor/houses, return captured card objects ─
   function removePicks(picks) {
     const captured = [];
     for (const id of picks) {
@@ -1492,30 +1750,29 @@
   // ── End of game ────────────────────────────────────────────────
   function endGame() {
     G.over = true;
-    // Remaining floor cards go to last capturer
     if (G.floor.length > 0 || G.houses.length > 0) {
       const leftover = [...G.floor, ...G.houses.flatMap(h => h.cards)];
-      if (G.lastCapture === 'player') G.playerPile.push(...leftover);
-      else                            G.cpuPile.push(...leftover);
-      G.floor   = [];
-      G.houses  = [];
+      if (G.lastCaptureTeam === 'A') G.teamAPile.push(...leftover);
+      else                           G.teamBPile.push(...leftover);
+      G.floor  = [];
+      G.houses = [];
     }
 
-    const pCard = calcScore(G.playerPile);
-    const cCard = calcScore(G.cpuPile);
-    const pTotal = pCard + G.playerSeeps * 50;
-    const cTotal = cCard + G.cpuSeeps    * 50;
+    const aCard  = calcScore(G.teamAPile);
+    const bCard  = calcScore(G.teamBPile);
+    const aTotal = aCard + G.teamASeeps * 50;
+    const bTotal = bCard + G.teamBSeeps * 50;
 
     const goTitle  = document.getElementById('go-title');
     const goDetail = document.getElementById('go-detail');
     const goBd     = document.getElementById('go-breakdown');
 
-    if (pTotal > cTotal)       { goTitle.textContent = 'You win!'; goTitle.style.color = '#7adf7a'; }
-    else if (pTotal < cTotal)  { goTitle.textContent = 'CPU wins.'; goTitle.style.color = '#f58070'; }
+    if (aTotal > bTotal)       { goTitle.textContent = 'Team A wins! (You & Partner)'; goTitle.style.color = '#7adf7a'; }
+    else if (aTotal < bTotal)  { goTitle.textContent = 'Team B wins! (CPU 1 & CPU 2)'; goTitle.style.color = '#f58070'; }
     else                       { goTitle.textContent = "It's a tie!"; goTitle.style.color = '#f5d060'; }
 
-    goDetail.textContent = `Final score — You: ${pTotal}  |  CPU: ${cTotal}`;
-    goBd.textContent = `Cards: You ${pCard} / CPU ${cCard} · Seeps (×50): You ${G.playerSeeps} / CPU ${G.cpuSeeps}`;
+    goDetail.textContent = `Final score — Team A: ${aTotal}  |  Team B: ${bTotal}`;
+    goBd.textContent = `Cards: A ${aCard} / B ${bCard} · Seeps (×50): A ${G.teamASeeps} / B ${G.teamBSeeps}`;
 
     document.getElementById('game-over').style.display = 'block';
     render();
